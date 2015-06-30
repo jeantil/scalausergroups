@@ -1,16 +1,109 @@
 ---
 layout: default
-title: Partners
 ---
-<div class="partners">
-  <h1 class="partner-heading">Scala User Groups</h1>
-  <div class="partners-friends">
-    {% for sponsor in site.data.sponsors.sug %}
-      <div class="partner-ug">
-        <a href="{{sponsor.url}}">
-            <img src="assets/images/partners/sug/logo-{{ sponsor.name }}.png" alt="Logo {{ sponsor.name }}">
-        </a>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Scala Space: Find Scala Meetup Groups Near You!</title>
+    <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
+    <link href="http://fonts.googleapis.com/css?family=Roboto+Slab:600,400" rel="stylesheet" type="text/css">
+    <link href="css/main.css" rel="stylesheet">
+  </head>
+  <body id>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+         <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#primary-nav">
+          <span class="sr-only">Menu</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/"><span class="red">Scala</span> user groups</span></a>
       </div>
-    {% endfor %}
+        <div id="primary-nav" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+             <li><a href="usergroups.html">UserGroups</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+        </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+    <div id="landing">
+    <h1>Scala Space</h1>
+    <h2>Find Scala Meetup Groups Near You!</h2>
+    <div id="map" style="position: absolute; width: 100%; height: 50em;"></div>
+    <div class="box">
+      <h3>Is your group missing, or you&rsquo;ve found a mistake?</h3>
+      <p>This website is open source, and contributing corrections, additions or new functionality is easy!</p>
+      <p>Just fork the <a href="https://github.com/scalaspace/scalaspace.github.io">scalaspace</a> repository on GitHub, make your changes to the <b>index.html</b> file (instructions are in the source code), and create a pull request. We will merge the changes.</p>
+    </div>
+
+    <!---------------------------------------------------------------------------
+      To add your Scala group to the array below, include a single-line array
+      with the following four elements, in order: group name, Meetup group ID,
+      and the latitude and longitude of the place where you usually meet.
+
+      The easiest way to find these is to do a Google search for "coordinates of
+      [place name]", and to reformat the response as real numbers, remembering to
+      negate longitudes in the Western Hemisphere, and latitudes in the Southern
+      Hemisphere.
+      For example, searching for "coordinates of Brighton" returns the response
+      "50.8429° N, 0.1313° W". This should be translated to the entry
+      ['Brighton Scala Users Group', 'http://example.com/', 50.8429, -0.1313].
+      Try to keep the locations in alphabetical order of name.
+     ---------------------------------------------------------------------------->
+
+    <script type="text/javascript">
+      var groups = [
+        ['Bay Area Scala Enthusiasts (BASE)', 'Scala-Bay', 37.3894, -122.0819],
+        ['Belgian Scala User Group', 'bescala', 50.8549,4.3753],
+        ['Berlin Brandenburg', 'Scala-Berlin-Brandenburg', 52.5167, 13.3833],
+        ['Boulder Area Scala Enthusiasts', 'The-Boulder-Area-Scala-Enthusiasts', 40.0274, -105.2519],
+        ['Chicago Scala Enthusiasts (CASE)', 'chicagoscala', 41.8369, -87.6847],
+        ['Rhein Main Scala Enthusiasts', 'Rhein-Main-Scala-Enthusiasts', 50.1167, 8.6833],
+        //['Japan Scala Users Group', 'https://github.com/scalajp', 35.6833, 139.6833],
+        ['Kraków Scala User Group', 'Krakow-Scala-User-Group', 50.0614, 19.9383],
+        ['London Scala Users Group (LSUG)', 'london-scala', 51.5072, -0.1275],
+        ['New York (ny-scala)', 'ny-scala', 40.7127, -74.0059],
+        ['Paris Scala User Group', 'Paris-Scala-User-Group-PSUG', 48.8567, 2.3508],
+        ['Scala Developers Barcelona', 'Scala-Developers-Barcelona', 41.3833, 2.1833],
+        ['ScalaMAD', 'Scala-Programming-Madrid', 40.4000, -3.7167],
+        ['Scala Romandie', 'Scala-Romandie', 46.2000, 6.1500],
+        ['SF Scala', 'SF-Scala', 37.7833, -122.4167],
+        ['Tricity Scala Users Group', 'Tricity-Scala-Users-Group', 54.3500, 18.6333],
+        ['Underscore (Israeli Scala User Group)', 'underscore', 32.0667, 34.8000],
+        ['Vienna Scala User Group', 'scala-vienna', 48.2000, 16.3667],
+        ['Warsaw Scala Enthusiasts', 'WarszawScaLa', 52.2333, 21.0167],
+      ];
+      var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 6,
+        center: new google.maps.LatLng(51.5072, 0.1275),
+        mapTypeId: google.maps.MapTypeId.TERRAIN
+      });
+      if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(pos) {
+          map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+        });
+      }
+
+      var info = new google.maps.InfoWindow();
+      var marker, i;
+      for(i = 0; i < groups.length; i++) {
+        marker = new google.maps.Marker({
+          position: new google.maps.LatLng(groups[i][2], groups[i][3]),
+          map: map
+        });
+        google.maps.event.addListener(marker, 'click', (function(marker, i) {
+          return function() {
+            info.setContent('<a href="http://www.meetup.com/'+groups[i][1]+'/">'+groups[i][0]+'</a>');
+            info.open(map, marker);
+          }
+        })(marker, i));
+      }
+    </script>
   </div>
-</div>
+  </body>
+</html>
